@@ -30,7 +30,8 @@ setup(
     tests_require=[],
     install_requires=[
         'autobahn[twisted]',
-        'python-dotenv'
+        'python-dotenv',
+        'pythonosc'
     ],
     entry_points={
         'console_scripts': [
