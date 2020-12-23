@@ -31,7 +31,8 @@ setup(
     install_requires=[
         'autobahn[twisted]',
         'python-dotenv',
-        'pythonosc'
+        'pythonosc',
+        'ujson'
     ],
     entry_points={
         'console_scripts': [

@@ -3,7 +3,7 @@ from twisted.internet import reactor
 from .amcp import AMCPClientFactory
 from .osc import OSCReceiverProtocol
 
-import json
+import ujson
 
 
 class DirDict(object):
@@ -82,7 +82,7 @@ class ServerProtocol(WebSocketServerProtocol):
 
     def onAMCPMessage(self, message):
         self.sendMessage(
-            json.dumps({
+            ujson.dumps({
                 'amcp': message.decode('utf-8').strip()
             }).encode('utf-8')
         )
@@ -90,7 +90,7 @@ class ServerProtocol(WebSocketServerProtocol):
     def onOSCMessage(self, message):
         state = map_osc_to_dict(message)
         self.sendMessage(
-            json.dumps(
+            ujson.dumps(
                 {'state': state.for_json()}
             ).encode('utf-8')
         )
