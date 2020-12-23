@@ -50,18 +50,30 @@ def map_osc_to_dict(osc):
 
 class ServerProtocol(WebSocketServerProtocol):
 
+    def __init__(self):
+        super().__init__()
+        self._amcp_factory = AMCPClientFactory(self)
+
     def connectionMade(self):
         super().connectionMade()
-        reactor.connectTCP(
+        self._caspar_connection = reactor.connectTCP(
             self.factory.config.casparcg_host,
             self.factory.config.casparcg_port,
-            AMCPClientFactory(self)
+            self._amcp_factory
         )
 
-        reactor.listenUDP(
+        self._osc_connection = reactor.listenUDP(
             self.factory.config.osc_port,
             OSCReceiverProtocol(self.onOSCMessage)
         )
+
+    def connectionLost(self, reason):
+        if hasattr(self, '_caspar_connection'):
+            self._caspar_connection.disconnect()
+            self._amcp_factory.stopTrying()
+
+        if hasattr(self, '_osc_connection'):
+            self._osc_connection.stopListening()
 
     def onMessage(self, payload, isBinary):
         if hasattr(self, 'amcp'):
